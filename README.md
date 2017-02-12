@@ -27,48 +27,48 @@ _chatDetailView.dataSource = self; // 这个也可以通过连线
 
 ```
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-return 5;
+    return 5;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-if(section == 0 || section == 2) {
-return 2;
-}
-return 1;
+    if(section == 0 || section == 2) {
+        return 2;
+    }
+    return 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-static int staticRow = 0;
-UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cellID"];
-if(cell == nil) {
-cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cellID"];
-}
-cell.textLabel.text = _dataArr[staticRow++];
-return cell;
+    static int staticRow = 0;
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cellID"];
+    if(cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cellID"];
+    }
+    cell.textLabel.text = _dataArr[staticRow++];
+    return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-return 44.0;
+    return 44.0;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-[tableView deselectRowAtIndexPath:indexPath animated:YES];
-if(indexPath.section == 4) {
-CFComplaintViewController *complaintVC = [[CFComplaintViewController alloc] init];
-[complaintVC loadWebviewWithURL:@"http://www.baidu.com"]; // 这里先用这个url，待更新
-UINavigationController *naviVC = [[UINavigationController alloc] initWithRootViewController:complaintVC];
-[self presentViewController:naviVC animated:YES completion:nil];
-}
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if(indexPath.section == 4) {
+        CFComplaintViewController *complaintVC = [[CFComplaintViewController alloc] init];
+        [complaintVC loadWebviewWithURL:@"http://www.baidu.com"]; // 这里先用这个url，待更新
+        UINavigationController *naviVC = [[UINavigationController alloc] initWithRootViewController:complaintVC];
+        [self presentViewController:naviVC animated:YES completion:nil];
+    }
 }
 ```
 
-这里要拉取出网页，还得在info.plist添加：
+这里要拉取出网页，需要在info.plist添加下面字段：
 
 ```
 <key>NSAppTransportSecurity</key>
 <dict>
-<key>NSAllowsArbitraryLoads</key>
-<true/>
+    <key>NSAllowsArbitraryLoads</key>
+    <true/>
 </dict>
 ```
 
@@ -103,11 +103,11 @@ UINavigationController *naviVC = [[UINavigationController alloc] initWithRootVie
 
 ```
 - (void)loadWebviewWithURL:(NSString *)url {
-_complaintWebview = [[WKWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width,self.view.frame.size.height)];
-// 添加进度条(下面会提到)
-[_complaintWebview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
-[self.view addSubview:_complaintWebview];
-// 添加代理方法(下面会提到)
+    _complaintWebview = [[WKWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width,self.view.frame.size.height)];
+    // 添加进度条(此处代码下面会提到)
+    [_complaintWebview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
+    [self.view addSubview:_complaintWebview];
+    // 添加代理方法(此处代码下面会提到)
 }
 
 ```
@@ -137,56 +137,56 @@ _loadProgressView.progressTintColor = [UIColor greenColor];
 
 ```
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
-WKWebView *webview = (WKWebView *)object;
-if (webview == self.complaintWebview && [keyPath isEqualToString:@"estimatedProgress"]) {
-CGFloat newprogress = [[change objectForKey:NSKeyValueChangeNewKey] doubleValue];
-if (newprogress == 1) {
-self.loadProgressView.hidden = YES;
-[self.loadProgressView setProgress:0 animated:NO];
-}else {
-self.loadProgressView.hidden = NO;
-[self.loadProgressView setProgress:newprogress animated:YES];
-}
-}
+    WKWebView *webview = (WKWebView *)object;
+    if (webview == self.complaintWebview && [keyPath isEqualToString:@"estimatedProgress"]) {
+        CGFloat newprogress = [[change objectForKey:NSKeyValueChangeNewKey] doubleValue];
+        if (newprogress == 1) {
+            self.loadProgressView.hidden = YES;
+            [self.loadProgressView setProgress:0 animated:NO];
+        }else {
+            self.loadProgressView.hidden = NO;
+            [self.loadProgressView setProgress:newprogress animated:YES];
+        }
+    }
 }
 
 - (void)setLoadCount:(NSInteger)loadCount {
-_loadCount = loadCount;
+    _loadCount = loadCount;
 
-if (loadCount == 0) {
-self.loadProgressView.hidden = YES;
-[self.loadProgressView setProgress:0 animated:NO];
-}else {
-self.loadProgressView.hidden = NO;
-CGFloat oldP = self.loadProgressView.progress;
-CGFloat newP = (1.0 - oldP) / (loadCount + 1) + oldP;
-if (newP > 0.95) {
-newP = 0.95;
-}
-[self.loadProgressView setProgress:newP animated:YES];
+    if (loadCount == 0) {
+        self.loadProgressView.hidden = YES;
+        [self.loadProgressView setProgress:0 animated:NO];
+    }else {
+        self.loadProgressView.hidden = NO;
+        CGFloat oldP = self.loadProgressView.progress;
+        CGFloat newP = (1.0 - oldP) / (loadCount + 1) + oldP;
+        if (newP > 0.95) {
+            newP = 0.95;
+        }
+        [self.loadProgressView setProgress:newP animated:YES];
 
-}
+    }
 }
 
 // 页面开始加载时调用
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation {
-self.loadCount ++;
+    self.loadCount ++;
 }
 
 // 内容返回时
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation {
-self.loadCount --;
+    self.loadCount --;
 }
 
 // 加载失败
 - (void)webView:(WKWebView *)webView didFailNavigation: (null_unspecified WKNavigation *)navigation withError:(NSError *)error {
-self.loadCount --;
-NSLog(@"%@",error);
+    self.loadCount --;
+    NSLog(@"%@",error);
 }
 
 // 取消监听
 - (void)dealloc { 
-[_complaintWebview removeObserver:self forKeyPath:@"estimatedProgress"];
+    [_complaintWebview removeObserver:self forKeyPath:@"estimatedProgress"];
 }
 
 ```
