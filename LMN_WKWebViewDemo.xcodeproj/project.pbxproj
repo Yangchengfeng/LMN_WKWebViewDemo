@@ -306,6 +306,7 @@
 				38B42FF71E5075BF0053D20E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

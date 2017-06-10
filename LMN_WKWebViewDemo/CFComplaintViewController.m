@@ -9,7 +9,7 @@
 #import "CFComplaintViewController.h"
 #import <WebKit/WebKit.h>
 
-@interface CFComplaintViewController ()
+@interface CFComplaintViewController () <WKNavigationDelegate>
 
 @property (nonatomic, strong) WKWebView *complaintWebview;
 @property (nonatomic, strong) UIProgressView *loadProgressView;
@@ -48,6 +48,10 @@
             [self.loadProgressView setProgress:newprogress animated:YES];
         }
     }
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
+//    NSLog(@"%@", navigationAction.request.URL.host);
 }
 
 - (void)setLoadCount:(NSInteger)loadCount {
