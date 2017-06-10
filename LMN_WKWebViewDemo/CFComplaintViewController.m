@@ -51,7 +51,7 @@
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
-//    NSLog(@"%@", navigationAction.request.URL.host);
+    NSLog(@"%@", navigationAction.request.URL.host);
 }
 
 - (void)setLoadCount:(NSInteger)loadCount {
