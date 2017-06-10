@@ -32,6 +32,7 @@
     _loadProgressView.progressTintColor = [UIColor greenColor];
     [_complaintWebview addSubview:_loadProgressView];
     [_complaintWebview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
+    _complaintWebview.navigationDelegate = self;
     [self.view addSubview:_complaintWebview];
     [self.complaintWebview addObserver:self forKeyPath:@"estimatedProgress" options:NSKeyValueObservingOptionNew context:nil];
 }
@@ -51,7 +52,7 @@
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
-    NSLog(@"%@", navigationAction.request.URL.host);
+        decisionHandler(WKNavigationActionPolicyAllow);
 }
 
 - (void)setLoadCount:(NSInteger)loadCount {
