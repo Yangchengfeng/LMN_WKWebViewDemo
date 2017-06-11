@@ -52,7 +52,10 @@
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
+    if([navigationAction.request.URL.query isEqual:@"complaintpage"]) {
         decisionHandler(WKNavigationActionPolicyAllow);
+    }
+    
 }
 
 - (void)setLoadCount:(NSInteger)loadCount {
